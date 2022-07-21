@@ -1,7 +1,5 @@
 import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 
-const image = { uri: 'https://reactjs.org/logo-og.png' };
-
 export default function Loading(props: { state: string }) {
   return (
     <View style={styles.container}>
