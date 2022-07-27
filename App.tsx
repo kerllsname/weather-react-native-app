@@ -10,6 +10,7 @@ const API = 'a36fb2913553f057d1ba7758f5056bf4';
 
 export default function App() {
   const [isLoading, setLoading] = useState(true);
+  const [loadingState, setLoadingState] = useState('Check permission...');
   const [requestedWeatherData, setNewData] = useState<weatherData>({
     main: {
       temp: 0,
@@ -19,6 +20,7 @@ export default function App() {
       {
         main: '',
         description: '',
+        icon: '',
       },
     ],
   });
@@ -34,10 +36,13 @@ export default function App() {
   async function weatherDataHandler() {
     try {
       await Location.requestForegroundPermissionsAsync();
+      setLoadingState('Check your coordinates...');
       const {
         coords: { latitude, longitude },
       } = await Location.getCurrentPositionAsync();
+      setLoadingState('Getting the weather...');
       await getWeatherRequest(latitude, longitude);
+      setLoadingState('We are almost done...');
       setLoading(false);
     } catch (error) {
       Alert.alert('Error', `${error}`);
@@ -45,12 +50,16 @@ export default function App() {
   }
 
   useEffect(() => {
-    const ac = new AbortController();
+    const abortController = new AbortController();
 
     weatherDataHandler();
 
-    return () => ac.abort();
+    return () => abortController.abort();
   }, []);
 
-  return isLoading ? <Loading /> : <Weather weatherData={requestedWeatherData} />;
+  return isLoading ? (
+    <Loading state={loadingState} />
+  ) : (
+    <Weather weatherData={requestedWeatherData} />
+  );
 }

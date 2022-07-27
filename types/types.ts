@@ -7,6 +7,7 @@ export type weatherData = {
     {
       main: string;
       description: string;
+      icon: string;
     }
   ];
 };
